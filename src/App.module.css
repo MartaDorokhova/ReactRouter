@@ -1,0 +1,58 @@
+.app {
+	margin-left: 15px;
+}
+.item {
+	display: flex;
+}
+
+button {
+	background-color: rgb(211, 202, 188);
+	min-width: 60px;
+	max-height: 18px;
+	min-height: 15px;
+	font-size: 7px;
+	margin-top: 8px;
+	margin-left: 6px;
+	border: 0.5px solid #83610b;
+}
+
+p {
+	min-width: 10px;
+}
+.delete {
+	margin-left: 10px;
+}
+form {
+	display: flex;
+}
+body {
+	font-size: 11px;
+}
+.newDeal {
+	margin-top: 8px;
+	display: block;
+}
+input {
+	height: 13px;
+	margin-top: 8px;
+	margin-left: 10px;
+	min-width: none;
+	max-width: 300px;
+}
+
+.update {
+	/* display: none; */
+	min-width: 1px;
+}
+
+label {
+	margin-top: 5px;
+}
+
+.deal {
+	min-width: 150px;
+}
+
+:global .active {
+	text-decoration: none;
+}
