@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useParams, useMatch } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import styles from './App.module.css';
 
 export const Task = () => {
@@ -9,19 +9,22 @@ export const Task = () => {
 	});
 	const [isLoading, setIsLoading] = useState(false);
 
-	const [isUpdating, setIsUpdating] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
-	const [isChanging, setIsChanging] = useState({ what: false, id: 0 });
+	const [isChanging, setIsChanging] = useState(false);
 	const [refreshToDoFlag, setRefreshToDoFlag] = useState();
 
 	const [updateInput, setUpdateInput] = useState();
 
 	const handleUpdateChange = (event) => {
-		setUpdateInput(event.target.value);
+		console.log(event.target.value);
+		console.log(updateInput);
+		if (event.target.value) {
+			setUpdateInput(event.target.value);
+		} else {
+			setUpdateInput(toDo.name);
+		}
 	};
 	const { id } = useParams();
-	const urlMatchData = useMatch('/task/:id');
-	console.log(urlMatchData);
 	const refreshToDo = () => setRefreshToDoFlag(!refreshToDoFlag);
 
 	const getToDo = () => {
@@ -37,29 +40,30 @@ export const Task = () => {
 		getToDo();
 	}, [refreshToDoFlag]);
 
-	const requestChangeDeal = (id) => {
-		setIsChanging({ what: true, id });
+	const requestChangeDeal = () => {
+		setIsChanging(true);
 	};
-	const requestUpdateDeal = (id) => {
-		setIsUpdating(true);
-		fetch(`http://localhost:3004/todos/${id}`, {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({
-				name: updateInput,
-			}),
-		})
-			.then((rawResponse) => rawResponse.json())
-			.then((response) => {
-				console.log('Дело обновлено:', response);
-				refreshToDo();
+	const requestUpdateDeal = () => {
+		if (updateInput) {
+			fetch(`http://localhost:3004/todos/${id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json;charset=utf-8' },
+				body: JSON.stringify({
+					name: updateInput,
+				}),
 			})
-			.finally(() => {
-				setIsUpdating(false);
-				setIsChanging({ what: false, id });
-			});
+				.then((rawResponse) => rawResponse.json())
+				.then((response) => {
+					console.log('Дело обновлено:', response);
+					refreshToDo();
+				})
+				.finally(() => {
+					setIsChanging(false);
+				});
+		}
+		setIsChanging(false);
 	};
-	const requestDeleteDeal = (id) => {
+	const requestDeleteDeal = () => {
 		setIsDeleting(true);
 		fetch(`http://localhost:3004/todos/${id}`, {
 			method: 'DELETE',
@@ -80,8 +84,8 @@ export const Task = () => {
 					<div className="loader"></div>
 				) : (
 					<div className={styles.item}>
-						<p className={styles.deal}>
-							{isChanging.what && isChanging.id === id ? (
+						<p>
+							{isChanging ? (
 								<div>
 									<input
 										className={styles.update}
@@ -90,28 +94,23 @@ export const Task = () => {
 										onChange={handleUpdateChange}
 										defaultValue={toDo.name}
 									/>
-									<button
-										disabled={isUpdating}
-										onClick={() => requestUpdateDeal(id)}
-									>
-										ОК
-									</button>
+									<button onClick={() => requestUpdateDeal()}>ОК</button>
 								</div>
 							) : (
-								<p className={styles.deal}>{toDo.name}</p>
+								<p>{toDo.name}</p>
 							)}
-							<button onClick={() => requestChangeDeal(id)}>
-								Изменить дело
-							</button>
-							<button
-								className={styles.delete}
-								disabled={isDeleting}
-								onClick={() => requestDeleteDeal(id)}
-							>
-								Удалить дело
-							</button>
+							<button onClick={() => requestChangeDeal()}>Изменить дело</button>
 							<NavLink to="/">
-								<button>Вернуться к списку дел</button>
+								<button
+									className={styles.delete}
+									disabled={isDeleting}
+									onClick={() => requestDeleteDeal()}
+								>
+									Удалить дело
+								</button>
+							</NavLink>
+							<NavLink to="/">
+								<button>Назад</button>
 							</NavLink>
 						</p>
 					</div>

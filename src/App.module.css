@@ -50,7 +50,10 @@ label {
 }
 
 .deal {
-	min-width: 150px;
+	width: 80px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 :global .active {
